@@ -2,6 +2,7 @@ package com.rodrigo.inventoryapi.controller;
 
 import com.rodrigo.inventoryapi.dto.productmaterial.AddRawMaterialToProductRequest;
 import com.rodrigo.inventoryapi.dto.productmaterial.ProductRawMaterialResponse;
+import com.rodrigo.inventoryapi.dto.productmaterial.UpdateProductRawMaterialRequest;
 import com.rodrigo.inventoryapi.service.ProductRawMaterialService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,15 @@ public class ProductRawMaterialController {
     @GetMapping
     public List<ProductRawMaterialResponse> listMaterials(@PathVariable Long productId) {
         return productRawMaterialService.listMaterialsByProduct(productId);
+    }
+
+    @PutMapping("/{associationId}")
+    public ProductRawMaterialResponse updateMaterial(
+            @PathVariable Long productId,
+            @PathVariable Long associationId,
+            @Valid @RequestBody UpdateProductRawMaterialRequest request
+    ) {
+        return productRawMaterialService.updateMaterialAssociation(productId, associationId, request);
     }
 
     @DeleteMapping("/{associationId}")

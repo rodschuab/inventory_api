@@ -2,6 +2,7 @@ package com.rodrigo.inventoryapi.service;
 
 import com.rodrigo.inventoryapi.dto.productmaterial.AddRawMaterialToProductRequest;
 import com.rodrigo.inventoryapi.dto.productmaterial.ProductRawMaterialResponse;
+import com.rodrigo.inventoryapi.dto.productmaterial.UpdateProductRawMaterialRequest;
 import com.rodrigo.inventoryapi.entity.Product;
 import com.rodrigo.inventoryapi.entity.ProductRawMaterial;
 import com.rodrigo.inventoryapi.entity.RawMaterial;
@@ -53,6 +54,31 @@ public class ProductRawMaterialService {
                 .map(this::toResponse)
                 .toList();
     }
+
+    public ProductRawMaterialResponse updateMaterialAssociation(
+            Long productId,
+            Long associationId,
+            UpdateProductRawMaterialRequest request
+    ) {
+
+        if (!productRepository.existsById(productId)) {
+            throw new EntityNotFoundException("Product not found");
+        }
+
+        ProductRawMaterial association = productRawMaterialRepository.findById(associationId)
+                .orElseThrow(() -> new EntityNotFoundException("Association not found"));
+
+        if (!association.getProduct().getId().equals(productId)) {
+            throw new EntityNotFoundException("Association not found for this product");
+        }
+
+        association.setQuantityRequired(request.quantityRequired());
+
+        ProductRawMaterial saved = productRawMaterialRepository.save(association);
+
+        return toResponse(saved);
+    }
+
 
     public void removeMaterialFromProduct(Long productId, Long associationId) {
 
